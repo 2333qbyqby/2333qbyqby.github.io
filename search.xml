@@ -1,6 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>关于本博客</title>
+    <url>/2023/10/17/%E5%85%B3%E4%BA%8E%E6%9C%AC%E5%8D%9A%E5%AE%A2/</url>
+    <content><![CDATA[<h1 id="关于这个个人博客"><a href="#关于这个个人博客" class="headerlink" title="关于这个个人博客"></a>关于这个个人博客</h1><h2 id="项目简介："><a href="#项目简介：" class="headerlink" title="项目简介："></a>项目简介：</h2><ul>
+<li>新学期到来，一方面朋友搞了个个人博客我觉得蛮帅的，另一方面在github上被薄纱的时候发现大佬们很多喜欢建一个自己的博客用来记录自己的笔记和分享，因此在朋友的帮助下基于Hexo框架和Hexo的Next主题搭建了本网站，并且将其部署至github，用作自己的笔记，以后会在本网站更新自己的学习笔记。</li>
+</ul>
+<hr>
+<h2 id="项目部署指南："><a href="#项目部署指南：" class="headerlink" title="项目部署指南："></a>项目部署指南：</h2><ul>
+<li><p>首先先感谢@<a href="https://kalipolis.gitee.io/">kalipolis</a>提供的bilibili教程链接： <a href="https://www.bilibili.com/video/BV1ts4y1f7Gu/">https://www.bilibili.com/video/BV1ts4y1f7Gu/</a></p>
+</li>
+<li><p>其次感谢以下部署Next主题所用到的教程：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/618864711">Hexo+Next主题搭建个人博客+优化全过程（完整详细版） - 知乎 (zhihu.com)</a></p>
+<p><a href="https://www.bilibili.com/video/BV16W411t7mq">https://www.bilibili.com/video/BV16W411t7mq</a></p>
+</li>
+<li><p>gitee的部署可以看第一个b站视频，对于github的部署可以看第二个，第三个视频为对于next主题的具体运用，在项目中，需要用到markdown语法来编写文章的内容，我用的是Typora,一个markdown记笔记的软件来进行文章的编辑，同样使用Typora的朋友可以参考<a href="https://zhuanlan.zhihu.com/p/293557841">知乎教程</a>进行基础的学习，更进一步可以翻阅菜鸟教程或者markdown的官方文档，在此不多赘述了。</p>
+</li>
+<li><p>除了next主题之外，还有很多其他主题，可以在官网进行下载安装，按照各个主题的官方文档进行相应配置，如果说你对网页的了解不是很多，仅仅是想搞着玩，那么建议安装文档详细的主题。</p>
+<hr>
+<h2 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h2><ul>
+<li>这篇关于博客的声明会随着网站的更新随时补充，希望我别当懒狗。。</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>导航</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于github项目蔚蓝手感2d控制器的研究</title>
+    <url>/2023/10/18/%E5%85%B3%E4%BA%8Egithub%E9%A1%B9%E7%9B%AE%E8%94%9A%E8%93%9D%E6%89%8B%E6%84%9F2d%E6%8E%A7%E5%88%B6%E5%99%A8%E7%9A%84%E7%A0%94%E7%A9%B6/</url>
+    <content><![CDATA[<h2 id="蔚蓝手感项目研究："><a href="#蔚蓝手感项目研究：" class="headerlink" title="蔚蓝手感项目研究："></a>蔚蓝手感项目研究：</h2><h3 id="项目链接："><a href="#项目链接：" class="headerlink" title="项目链接："></a>项目链接：</h3><p><a href="https://github.com/david-reborn/2D-Platform-Controller">https://github.com/david-reborn/2D-Platform-Controller</a></p>
+<h3 id="脚本分析："><a href="#脚本分析：" class="headerlink" title="脚本分析："></a>脚本分析：</h3><h4 id="common文件夹："><a href="#common文件夹：" class="headerlink" title="common文件夹："></a>common文件夹：</h4><h5 id="Calc脚本"><a href="#Calc脚本" class="headerlink" title="Calc脚本"></a>Calc脚本</h5><ul>
+<li><p>提供一个方法，这个方法接受三个浮点型参数：<code>val</code>（值）、prevVal（前一个值）和<code>interval</code>（间隔），用于确定当前值<code>val</code>相对于前一个值<code>prevVal</code>是否进入了新的<code>interval</code>区间。</p>
+</li>
+<li><pre><code class="c#">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Myd.Common
+&#123;
+    public static class Calc
+    &#123;
+        public static bool OnInterval(float val, float prevVal, float interval)
+        &#123;
+            return (int)(prevVal / interval) != (int)(val / interval);
+        &#125;
+    &#125;
+&#125;
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  具体实现上，这个方法首先分别计算`prevVal`和`val`除以`interval`的结果的整数部分，然后比较这两个结果是否相等。如果不等，表示`val`已经“跨越”了一个或多个`interval`，相当于进入了新的区间，方法返回`true`；如果相等，表示`val`仍处于`prevVal`所在的`interval`区间内，方法返回`false`。</span><br><span class="line"></span><br><span class="line">  ##### Ease脚本</span><br><span class="line"></span><br><span class="line">+ 定义类Ease这个静态类，这个`Ease`类定义了许多常见的缓动函数，其中包括线性（`Linear`）、正弦（`SineIn, SineOut, SineInOut`）、二次（`QuadIn, QuadOut, QuadInOut`）、三次（`CubeIn, CubeOut, CubeInOut`），四次方（`QuintIn, QuintOut, QuintInOut`）、指数（`ExpoIn, ExpoOut, ExpoInOut`）等等。</span><br><span class="line"></span><br><span class="line">  ```c#</span><br><span class="line">  public delegate float Easer(float t);</span><br></pre></td></tr></table></figure>
+
+</code></pre>
+</li>
+<li><p>此外，这个类还定义了一个委托<code>Easer</code>，它接受一个<code>float</code>类型的参数，并返回一个<code>float</code>类型的值。所有的缓动函数都是这个类型的，接收一个在0至1之间的浮点数，表示开始和结束之间的一个插值，然后返回一个可能略大于或小于这个范围的新的浮点数。</p>
+</li>
+</ul>
+<p>剩下的common文件夹中的脚本在项目中没有引用，因此不再解释</p>
+<hr>
+<h4 id="Components文件夹"><a href="#Components文件夹" class="headerlink" title="Components文件夹"></a>Components文件夹</h4><h5 id="JumpCheck脚本"><a href="#JumpCheck脚本" class="headerlink" title="JumpCheck脚本"></a>JumpCheck脚本</h5><ul>
+<li>专门控制土狼时间的类，来控制是否能够跳跃。</li>
+</ul>
+<h5 id="WallBoost"><a href="#WallBoost" class="headerlink" title="WallBoost"></a>WallBoost</h5><ul>
+<li>Wall Boost组件，当攀墙时跳跃，如果没有指定X轴方向，则系统自动产生一个推离墙面的力。且给予一定的持续时间。</li>
+</ul>
+<h4 id="Configs"><a href="#Configs" class="headerlink" title="Configs"></a>Configs</h4><h5 id="PlayerParams"><a href="#PlayerParams" class="headerlink" title="PlayerParams"></a>PlayerParams</h5><ul>
+<li>存放Player的参数，是个SO，包含了重载常数的方法和回调的委托</li>
+</ul>
+<hr>
+<h4 id="Core文件夹"><a href="#Core文件夹" class="headerlink" title="Core文件夹"></a>Core文件夹</h4><h5 id="States"><a href="#States" class="headerlink" title="States"></a>States</h5><h6 id="FiniteStateMachine"><a href="#FiniteStateMachine" class="headerlink" title="FiniteStateMachine"></a>FiniteStateMachine</h6><ul>
+<li><p>定义了状态机的基础状态 抽象类BaseActionState，有限状态机FiniteStateMachine以及状态的枚举类EActionState.</p>
+</li>
+<li><pre><code class="c#">public abstract class BaseActionState
+    &#123;
+        protected EActionState state;
+        protected PlayerController ctx;
+
+        protected BaseActionState(EActionState state, PlayerController context)
+        &#123;
+            this.state = state;
+            this.ctx = context;
+        &#125;
+
+        public EActionState State &#123; get =&gt; state; &#125;
+
+        //每一帧都执行的逻辑
+        public abstract EActionState Update(float deltaTime);
+
+        public abstract IEnumerator Coroutine();
+
+        public abstract void OnBegin();
+
+        public abstract void OnEnd();
+
+        public abstract bool IsCoroutine();
+    &#125;
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">  在这一段代码中，定义了各个状态的基类，主要关注几个方法的定义</span><br><span class="line"></span><br><span class="line">+ 有限状态机类：</span><br><span class="line"></span><br><span class="line">+  属性声明</span><br><span class="line"></span><br><span class="line">  ```c#</span><br><span class="line">  	    private S[] states;</span><br><span class="line">  		private int currState = -1;</span><br><span class="line">          private int prevState = -1;</span><br><span class="line">          private Coroutine currentCoroutine;</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+<li><p>构造函数：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FiniteStateMachine</span>(<span class="params"><span class="built_in">int</span> size</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">this</span>.states = <span class="keyword">new</span> S[size];</span><br><span class="line">            <span class="keyword">this</span>.currentCoroutine = <span class="keyword">new</span> Coroutine(<span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Update</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"><span class="built_in">float</span> deltaTime</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            State = (<span class="built_in">int</span>)<span class="keyword">this</span>.states[<span class="keyword">this</span>.currState].Update(deltaTime);</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.currentCoroutine.Active)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">this</span>.currentCoroutine.Update(deltaTime);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>TODO:其他状态</p>
+</li>
+</ul>
+<h5 id="其他核心控件："><a href="#其他核心控件：" class="headerlink" title="其他核心控件："></a>其他核心控件：</h5><ul>
+<li>一些解耦用的接口，相应的状态，管理状态的playerController,这边用partical class实现了对playcontroller中控制不同部分的部件的解耦</li>
+</ul>
+<hr>
+<h4 id="Effect文件夹"><a href="#Effect文件夹" class="headerlink" title="Effect文件夹"></a>Effect文件夹</h4><h5 id="EffectComponent"><a href="#EffectComponent" class="headerlink" title="EffectComponent:"></a>EffectComponent:</h5><ul>
+<li>挂载在playerRender的预制体上，控制人物的头巾效果</li>
+</ul>
+<h5 id="SceneEffectManager"><a href="#SceneEffectManager" class="headerlink" title="SceneEffectManager"></a>SceneEffectManager</h5><ul>
+<li><p>管理所有的特效，具体特效如下：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">[<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">private</span> ParticleSystem vfxMoveDust;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">private</span> ParticleSystem vfxJumpDust;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">private</span> ParticleSystem vfxLandDust;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">private</span> ParticleSystem vfxDashLine;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">private</span> RippleEffect vfxRippleEffect;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">private</span> GameObject vfxSpeedRing;</span><br></pre></td></tr></table></figure>
+
+<p>在该脚本中，提供了为上层开启特效的函数api</p>
+</li>
+</ul>
+<h5 id="TrailSnapShot"><a href="#TrailSnapShot" class="headerlink" title="TrailSnapShot"></a>TrailSnapShot</h5><ul>
+<li>断裂特效？</li>
+</ul>
+<hr>
+<h4 id="Level文件夹"><a href="#Level文件夹" class="headerlink" title="Level文件夹"></a>Level文件夹</h4><p>该文件夹中的Gound和Level只提供了自己颜色的接口,也就是让玩家获取到地图的颜色</p>
+<hr>
+<h4 id="Postprocessing文件夹"><a href="#Postprocessing文件夹" class="headerlink" title="Postprocessing文件夹"></a>Postprocessing文件夹</h4><h5 id="PostEffectsController"><a href="#PostEffectsController" class="headerlink" title="PostEffectsController:"></a>PostEffectsController:</h5><ul>
+<li>管理对于摄像机的特殊效果，也就是冲刺时的空间扭曲</li>
+</ul>
+<h5 id="RippleEffect"><a href="#RippleEffect" class="headerlink" title="RippleEffect"></a>RippleEffect</h5><ul>
+<li>对于效果的具体实现（通过shader实现）</li>
+</ul>
+<h4 id="其他重要脚本"><a href="#其他重要脚本" class="headerlink" title="其他重要脚本"></a>其他重要脚本</h4><h5 id="Constant："><a href="#Constant：" class="headerlink" title="Constant："></a>Constant：</h5><ul>
+<li>一些游戏中的常数</li>
+</ul>
+<h5 id="GameInput"><a href="#GameInput" class="headerlink" title="GameInput:"></a>GameInput:</h5><ul>
+<li>管理游戏的输入（包括一些预输入的功能）</li>
+</ul>
+<h4 id="Player："><a href="#Player：" class="headerlink" title="Player："></a>Player：</h4><ul>
+<li>管理playercontroller和playerRenderer，并且允许内部进行交互</li>
+</ul>
+<h5 id="PlayerRender"><a href="#PlayerRender" class="headerlink" title="PlayerRender"></a>PlayerRender</h5><ul>
+<li>绘制玩家的形象，以下是其中的属性</li>
+</ul>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">[<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">public</span> SpriteRenderer spriteRenderer;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">public</span> ParticleSystem vfxDashFlux;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">public</span> ParticleSystem vfxWallSlide;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">public</span> TrailRenderer hair;</span><br><span class="line"></span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">public</span> SpriteRenderer hairSprite01;</span><br><span class="line">        [<span class="meta">SerializeField</span>]</span><br><span class="line">        <span class="keyword">public</span> SpriteRenderer hairSprite02;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> Vector2 scale;</span><br><span class="line">        <span class="keyword">private</span> Vector2 currSpriteScale;</span><br></pre></td></tr></table></figure>
+
+<h5 id="SceneCamera"><a href="#SceneCamera" class="headerlink" title="SceneCamera:"></a>SceneCamera:</h5><p>实现摄像头的抖动等功能，实际上可用cinemachine的虚拟摄像机的功能代替</p>
+<h5 id="Game"><a href="#Game" class="headerlink" title="Game:"></a>Game:</h5><p>最高层的脚本，管控整个游戏的流程，并且负责提供一些API供低层的脚本使用</p>
+<h5 id=""><a href="#" class="headerlink" title=""></a></h5>]]></content>
+      <tags>
+        <tag>unity</tag>
+        <tag>源码分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title></title>
     <url>/2023/10/17/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</url>
     <content><![CDATA[<h3 id="1面向对象"><a href="#1面向对象" class="headerlink" title="1面向对象"></a>1面向对象</h3><ul>
@@ -251,33 +408,5 @@
 <h4 id="5-4EventHandler"><a href="#5-4EventHandler" class="headerlink" title="5.4EventHandler"></a>5.4EventHandler</h4><figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> _06<span class="title">EventHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">EventPublisher</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">event</span> EventHandler MyEvent;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Triggerevent</span>()<span class="comment">//事件不能在外部被调用，所以要在发布者里写一个能够调用事件的函数</span></span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(MyEvent != <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                MyEvent(<span class="keyword">this</span>, EventArgs.Empty);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">EventSubscriber</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Fun</span>(<span class="params"><span class="built_in">object</span> sender,EventArgs e</span>)<span class="comment">//事件订阅者的函数</span></span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">&quot;111&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">internal</span> <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] args</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            EventPublisher publisher = <span class="keyword">new</span> EventPublisher();</span><br><span class="line">            EventSubscriber subscriber = <span class="keyword">new</span> EventSubscriber();</span><br><span class="line">            publisher.MyEvent += subscriber.Fun;</span><br><span class="line">            publisher.Triggerevent();<span class="comment">//触发事件</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h4 id="5-5Lamda表达式"><a href="#5-5Lamda表达式" class="headerlink" title="5.5Lamda表达式"></a>5.5Lamda表达式</h4>]]></content>
-  </entry>
-  <entry>
-    <title>关于本博客</title>
-    <url>/2023/10/17/%E5%85%B3%E4%BA%8E%E6%9C%AC%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<h1 id="关于这个个人博客"><a href="#关于这个个人博客" class="headerlink" title="关于这个个人博客"></a>关于这个个人博客</h1><h2 id="项目简介："><a href="#项目简介：" class="headerlink" title="项目简介："></a>项目简介：</h2><ul>
-<li>新学期到来，一方面朋友搞了个个人博客我觉得蛮帅的，另一方面在github上被薄纱的时候发现大佬们很多喜欢建一个自己的博客用来记录自己的笔记和分享，因此在朋友的帮助下基于Hexo框架和Hexo的Next主题搭建了本网站，并且将其部署至github，用作自己的笔记，以后会在本网站更新自己的学习笔记。</li>
-</ul>
-<hr>
-<h2 id="项目部署指南："><a href="#项目部署指南：" class="headerlink" title="项目部署指南："></a>项目部署指南：</h2><ul>
-<li><p>首先先感谢@<a href="https://kalipolis.gitee.io/">kalipolis</a>提供的bilibili教程链接： <a href="https://www.bilibili.com/video/BV1ts4y1f7Gu/">https://www.bilibili.com/video/BV1ts4y1f7Gu/</a></p>
-</li>
-<li><p>其次感谢以下部署Next主题所用到的教程：</p>
-<p><a href="https://zhuanlan.zhihu.com/p/392618246">Github 部署个人网页 | 一键部署 - 知乎 (zhihu.com)</a></p>
-<p><a href="https://www.bilibili.com/video/BV16W411t7mq">https://www.bilibili.com/video/BV16W411t7mq</a></p>
-</li>
-<li><p>gitee的部署可以看第一个b站视频，对于github的部署可以看第二个，第三个视频为对于next主题的具体运用，在项目中，需要用到markdown语法来编写文章的内容，我用的是Typora,一个markdown记笔记的软件来进行文章的编辑，同样使用Typora的朋友可以参考<a href="https://zhuanlan.zhihu.com/p/293557841">知乎教程</a>进行基础的学习，更进一步可以翻阅菜鸟教程或者markdown的官方文档，在此不多赘述了。</p>
-</li>
-<li><p>除了next主题之外，还有很多其他主题，可以在官网进行下载安装，按照各个主题的官方文档进行相应配置，如果说你对网页的了解不是很多，仅仅是想搞着玩，那么建议安装文档详细的主题。</p>
-<hr>
-<h2 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h2><ul>
-<li>这篇关于博客的声明会随着网站的更新随时补充，希望我别当懒狗。。</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>导航</tag>
-      </tags>
   </entry>
 </search>
