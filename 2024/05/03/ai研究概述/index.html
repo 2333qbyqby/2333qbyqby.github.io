@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/miku.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/miku.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/miku.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"2333qbyqby.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="参考资料：AI反拆：只狼狮子猿 | 设计者笔记 (jskyzero.com) 如何设计有“对话感”的BOSS？《只狼》Ai完全拆解。 - 知乎 (zhihu.com) HTN框架介绍、开发心得-CSDN博客 游戏AI研究（一）：感知AI - GameRes游资网 FSM（状态机）、HFSM（分层状态机）、BT（行为树）的区别_对战状态机-CSDN博客 行为树入门教程 - 知乎 (zhihu.com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ai研究概述">
+<meta property="og:url" content="https://2333qbyqby.github.io/2024/05/03/ai%E7%A0%94%E7%A9%B6%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Fivuvuv的博客">
+<meta property="og:description" content="参考资料：AI反拆：只狼狮子猿 | 设计者笔记 (jskyzero.com) 如何设计有“对话感”的BOSS？《只狼》Ai完全拆解。 - 知乎 (zhihu.com) HTN框架介绍、开发心得-CSDN博客 游戏AI研究（一）：感知AI - GameRes游资网 FSM（状态机）、HFSM（分层状态机）、BT（行为树）的区别_对战状态机-CSDN博客 行为树入门教程 - 知乎 (zhihu.com">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1409576-20181226091322393-1146430295.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1409576-20190207223240946-913199845.jpg">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/20190723100031475.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/image.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/image.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/bt_fallback_node.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/2.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-a800c1c10fe5e8f13db4ad82f6d126f4_720w.webp">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-541de51410a1c5b8983a2eef32dbedf7_r.jpg">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-4e0c131189696544271fda087c56ea2b_720w.webp">
+<meta property="og:image" content="https://myfirstblog.oss-cn-hangzhou.aliyuncs.com/typoraImages_3/20210916152958.png!webp">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/ef0a710c-364b-4997-98b0-7ddacdca53d3_image.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/db2db7e0-546b-4eb6-ac80-d365d11dd2f8_image.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/b301c86dd22698c44a8deee8d327ef0a-910-775.png">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-d7c4bba0d6c91ccc34418a46ccb09579_r.jpg">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-1a700dcc21f30e50aebd5dc026bc3b7e_r.jpg">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-a89d37d7d98d4513371099c8176dffe9_1440w.webp">
+<meta property="og:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-7d8f1b034d1e02bce986187dd8e9ae22_r.jpg">
+<meta property="article:published_time" content="2024-05-03T11:27:36.000Z">
+<meta property="article:modified_time" content="2024-05-03T11:49:09.722Z">
+<meta property="article:author" content="qby">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1409576-20181226091322393-1146430295.png">
+
+
+<link rel="canonical" href="https://2333qbyqby.github.io/2024/05/03/ai%E7%A0%94%E7%A9%B6%E6%A6%82%E8%BF%B0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://2333qbyqby.github.io/2024/05/03/ai%E7%A0%94%E7%A9%B6%E6%A6%82%E8%BF%B0/","path":"2024/05/03/ai研究概述/","title":"ai研究概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ai研究概述 | Fivuvuv的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Fivuvuv的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一个菜鸡的学习记录</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">参考资料：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A6%81%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">概要：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B8%E6%88%8FAI%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">游戏AI是什么？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">3.</span> <span class="nav-text">状态机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%8A%B6%E6%80%81%E6%9C%BA%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么需要状态机？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%8C%E4%B8%BA%E6%A0%91"><span class="nav-number">4.</span> <span class="nav-text">行为树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%A1%8C%E4%B8%BA%E6%A0%91%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">为什么需要行为树？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E4%B8%BA%E6%A0%91%E7%9A%84%E6%8E%A8%E5%AF%BC%E6%96%B9%E6%B3%95%E8%AE%BA"><span class="nav-number">4.2.</span> <span class="nav-text">行为树的推导方法论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E4%B8%BA%E6%A0%91%E7%9A%84%E6%A6%82%E5%BF%B5%EF%BC%88behavior-tree%EF%BC%89"><span class="nav-number">4.3.</span> <span class="nav-text">行为树的概念（behavior tree）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%8E%A7%E5%88%B6%E7%BB%93%E7%82%B9%EF%BC%9A"><span class="nav-number">4.4.</span> <span class="nav-text">不同类型的控制结点：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E8%8A%82%E7%82%B9"><span class="nav-number">4.4.1.</span> <span class="nav-text">顺序节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E8%8A%82%E7%82%B9"><span class="nav-number">4.4.2.</span> <span class="nav-text">选择节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E8%8A%82%E7%82%B9"><span class="nav-number">4.4.3.</span> <span class="nav-text">并行节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E7%BB%93%E7%82%B9"><span class="nav-number">4.4.4.</span> <span class="nav-text">装饰结点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E4%B8%BA%E6%A0%91%E4%B8%BE%E4%BE%8B%E8%AF%B4%E6%98%8E"><span class="nav-number">4.5.</span> <span class="nav-text">行为树举例说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8unity%E4%B8%AD%E4%BD%BF%E7%94%A8%E8%A1%8C%E4%B8%BA%E6%A0%91%E6%8F%92%E4%BB%B6%EF%BC%9A"><span class="nav-number">4.6.</span> <span class="nav-text">在unity中使用行为树插件：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GOAP-Goal-Orentated-Action-planning"><span class="nav-number">5.</span> <span class="nav-text">GOAP(Goal Orentated Action planning):</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">5.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GOAP%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">5.2.</span> <span class="nav-text">GOAP使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GOAP%E4%B8%AD%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="nav-number">5.3.</span> <span class="nav-text">GOAP中的一些概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number">5.4.</span> <span class="nav-text">具体示例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E8%A1%8C%E4%B8%BA%E6%A0%91%E5%92%8C%E7%8A%B6%E6%80%81%E6%9C%BA%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">5.5.</span> <span class="nav-text">与行为树和状态机的对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTN%EF%BC%88Hierarchical-Task-Networks%EF%BC%89%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">HTN（Hierarchical Task Networks）：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%EF%BC%9A"><span class="nav-number">6.1.</span> <span class="nav-text">学习资料：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="nav-number">6.2.</span> <span class="nav-text">概念介绍：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AF%8D%EF%BC%9A"><span class="nav-number">6.3.</span> <span class="nav-text">关键词：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%A7%E8%87%B4%E6%9E%B6%E6%9E%84"><span class="nav-number">6.3.1.</span> <span class="nav-text">大致架构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="nav-number">6.4.</span> <span class="nav-text">详细概念：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%96%E7%95%8C%E7%8A%B6%E6%80%81%EF%BC%88The-World-State%EF%BC%89"><span class="nav-number">6.4.1.</span> <span class="nav-text">世界状态（The World State）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E6%84%9F%E5%99%A8%EF%BC%88Sensor%EF%BC%89"><span class="nav-number">6.4.2.</span> <span class="nav-text">传感器（Sensor）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E4%BB%BB%E5%8A%A1%EF%BC%88Primitive-Tasks"><span class="nav-number">6.4.3.</span> <span class="nav-text">原子任务（Primitive Tasks)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E4%BB%BB%E5%8A%A1%EF%BC%88Composite-Tasks%EF%BC%89"><span class="nav-number">6.4.4.</span> <span class="nav-text">复合任务（Composite Tasks）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%EF%BC%88method%EF%BC%89"><span class="nav-number">6.4.5.</span> <span class="nav-text">方法（method）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E8%80%85%E5%85%B3%E7%B3%BB"><span class="nav-number">6.4.6.</span> <span class="nav-text">三者关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E5%88%92%EF%BC%88Plan%EF%BC%89"><span class="nav-number">6.4.7.</span> <span class="nav-text">计划（Plan）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%84%E5%88%92%E5%99%A8%EF%BC%88Planner%EF%BC%89"><span class="nav-number">6.4.8.</span> <span class="nav-text">规划器（Planner）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8%EF%BC%9A"><span class="nav-number">6.4.9.</span> <span class="nav-text">执行器：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E7%8B%BC%E7%9A%84%E6%B8%B8%E6%88%8FAI%E2%80%94-%E4%BB%A5%E5%BC%A6%E4%B8%80%E9%83%8E%E4%B8%BA%E4%BE%8B%EF%BC%88%E8%A1%8C%E4%B8%BA%E6%A0%91%E4%B8%8EHTN%E7%9A%84%E7%BB%93%E5%90%88%EF%BC%8C%E5%8F%98%E7%A7%8D%E7%9A%84HTN%E6%88%96%E8%80%85%E8%A1%8C%E4%B8%BA%E6%A0%91%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">只狼的游戏AI—-以弦一郎为例（行为树与HTN的结合，变种的HTN或者行为树）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%BC%80%E5%A4%B4%EF%BC%9A"><span class="nav-number">7.0.1.</span> <span class="nav-text">写在开头：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AI%E7%BB%93%E6%9E%84%EF%BC%9A"><span class="nav-number">7.0.2.</span> <span class="nav-text">AI结构：</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="qby"
+      src="/images/miku.jpg">
+  <p class="site-author-name" itemprop="name">qby</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/2333qbyqby" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;2333qbyqby" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://2333qbyqby.github.io/2024/05/03/ai%E7%A0%94%E7%A9%B6%E6%A6%82%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/miku.jpg">
+      <meta itemprop="name" content="qby">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Fivuvuv的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ai研究概述 | Fivuvuv的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span class="post-meta-divider">|</span>
+<span title="post.wordcount">
+<span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span>字数： 7.1k
+<span>预计阅读时间: 26 分钟</span>
+</span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ai研究概述
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-05-03 19:27:36 / 修改时间：19:49:09" itemprop="dateCreated datePublished" datetime="2024-05-03T19:27:36+08:00">2024-05-03</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h2><p><a target="_blank" rel="noopener" href="https://design.jskyzero.com/2023/10/10/sekiro_lion_tamarin_AI/">AI反拆：只狼狮子猿 | 设计者笔记 (jskyzero.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/614731111">如何设计有“对话感”的BOSS？《只狼》Ai完全拆解。 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/jk_chen_acmer/article/details/118894596">HTN框架介绍、开发心得-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.gameres.com/830335.html">游戏AI研究（一）：感知AI - GameRes游资网</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39885372/article/details/103950973">FSM（状态机）、HFSM（分层状态机）、BT（行为树）的区别_对战状态机-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/463182588">行为树入门教程 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/675093070">游戏开发技术杂谈14：理解行为树 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://robohub.org/introduction-to-behavior-trees/">https://robohub.org/introduction-to-behavior-trees/</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/463182588">https://zhuanlan.zhihu.com/p/463182588</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/611393851">行为树的理论与实践入门 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/575072589">GOAP思路解析与代码框架 - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/372718085">&lt;游戏开发&gt;怪物AI实现方案-GOAP - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.lfzxb.top/goal-oriented-action-planning-tech-share/">目标导向的AI系统（GOAP）技术分享 | 登峰造极者，殊途亦同归。 (lfzxb.top)</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/AkiKurisu/AkiGOAP">AkiKurisu&#x2F;AkiGOAP: Modular and high-performed Unity Goal Oriented Action Planner with well designed visual graph editor (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.unity.cn/projects/657fcd52edbc2a002654a6b4">游戏AI行为决策方法——HTN 教程（附代码与项目） - 技术专栏 - Unity官方开发者社区</a></p>
+<p><a target="_blank" rel="noopener" href="https://yimicgh.top/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/AI-Plan-11-Task-Networks/">Ai Plan (11) Task Network | Yimi的小天地 (yimicgh.top)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/597082052">AI算法–通过实例探讨分层任务网络规划(HTN) - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/607593872">HTN简略笔记 - 知乎 (zhihu.com)</a></p>
+<span id="more"></span>
+
+<h2 id="概要："><a href="#概要：" class="headerlink" title="概要："></a>概要：</h2><h3 id="游戏AI是什么？"><a href="#游戏AI是什么？" class="headerlink" title="游戏AI是什么？"></a>游戏AI是什么？</h3><p>在以前游戏AI基本上都是程序员预先定义编写好可能发生的行为，而不具有机器学习那种自我学习的特性。这是因为游戏AI主要职责是模拟出智能行为，而并非学习（例如：街道上会避让车的人群，天空中乱飞的小鸟，来回巡逻的守卫，兵线上的小兵…）。而游戏AI往往使用的是以行为树为代表的人工设计方法，而很少应用到机器学习技术。可以说游戏AI是智能的假象。</p>
+<p>在游戏中，AI（人工智能）是指模拟和实现游戏角色的智能行为的技术。虽然在过去，游戏AI主要依赖程序员预定义可能发生的行为，但随着技术的发展，现代游戏AI已经涵盖了更多复杂的技术和方法。以下是一些常见的游戏AI架构：</p>
+<ol>
+<li><strong>行为树（Behavior Trees）</strong>：行为树是一种流行的游戏AI设计方法，它将角色的行为表示为树结构。游戏开发者可以通过安排节点和连接来控制角色的决策和行为。</li>
+<li><strong>状态机（Finite State Machines）</strong>：状态机是一种基本的游戏AI架构，角色可以处于不同的状态，并根据条件或事件转换状态。</li>
+<li><strong>路径规划（Pathfinding Algorithms）</strong>：路径规划是指让角色在游戏中找到最佳路径的技术。常见的算法包括A*算法和Dijkstra算法。</li>
+<li><strong>博弈树（Minimax Algorithm）</strong>：在许多游戏中，特别是棋类游戏，博弈树是一种用于决策制定的重要技术，通过搜索可能的走法并选择最有利的策略。</li>
+<li><strong>机器学习（Machine Learning）</strong>：现代游戏开始采用机器学习技术来改进游戏AI的表现。深度强化学习等技术被应用于让AI角色更加智能和自适应。</li>
+</ol>
+<h2 id="状态机"><a href="#状态机" class="headerlink" title="状态机"></a>状态机</h2><p>状态机模式是一个游戏常用的经典设计模式，常被用作管理一种物体的各种状态（例如管理人物的行走，站立，跳跃等状态）</p>
+<p>游戏 AI 选择状态机模式的原因有几个重要的考虑：</p>
+<ol>
+<li><strong>简单性和可维护性</strong>：状态机模式非常直观和易于理解。通过将行为划分为不同的状态，并定义状态之间的转换规则，使得代码更易维护和扩展。开发人员可以直观地查看状态之间的转换关系，从而更容易调试和修改行为。</li>
+<li><strong>灵活性</strong>：状态机模式提供了对游戏 AI 行为进行动态管理和调整的灵活性。通过修改状态之间的转换规则，可以改变 AI 的行为方式，使得游戏 AI 可以根据不同的情况作出不同的反应。</li>
+<li><strong>逻辑分离</strong>：使用状态机模式可以将游戏 AI 的逻辑和状态信息进行分离。这样可以使得 AI 的行为更具可读性，并允许开发人员单独处理状态转换逻辑和状态具体行为逻辑，提高了代码的组织和可维护性。</li>
+<li><strong>适用性广泛</strong>：状态机模式适用于各种不同类型的游戏 AI，无论是简单的角色移动AI还是复杂的决策系统。状态机模式是一种通用且有效的设计模式，适用于各种游戏 AI 场景。</li>
+</ol>
+<h3 id="为什么需要状态机？"><a href="#为什么需要状态机？" class="headerlink" title="为什么需要状态机？"></a>为什么需要状态机？</h3><p>假如我们正在开发一款动作游戏，当前的任务是实现根据输入来控制主角的行为——当按下B键时，他应该跳跃。</p>
+<p>直观的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (input == PRESS_B) &#123;</span><br><span class="line">     <span class="keyword">if</span> (!m_isJumping) &#123;</span><br><span class="line">         m_isJumping = <span class="literal">true</span>;</span><br><span class="line">         <span class="built_in">Jump</span>();<span class="comment">//跳跃的代码</span></span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>后来我们需要添加更多行为了，所有行为如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (input == PRESS_B) &#123;</span><br><span class="line">       <span class="comment">//如果在站立时且没在跳跃，则跳跃</span></span><br><span class="line">       <span class="keyword">if</span> (!m_isJumping &amp;&amp; m_isStanding) &#123;</span><br><span class="line">           m_isJumping = <span class="literal">true</span>;</span><br><span class="line">           player.<span class="built_in">jump</span>();<span class="comment">//跳跃的代码</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span> <span class="keyword">if</span> (input == PRESS_DOWN) &#123;</span><br><span class="line">       <span class="comment">//如果在跳跃时且没在俯冲，则俯冲</span></span><br><span class="line">       <span class="keyword">if</span> (m_isJumping &amp;&amp; !m_isDiving) &#123;</span><br><span class="line">           m_isDiving</span><br><span class="line">           player.<span class="built_in">dive</span>();<span class="comment">//俯冲的代码</span></span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//如果没在跳跃</span></span><br><span class="line">       <span class="keyword">else</span> <span class="keyword">if</span> (!m_isJumping) &#123;</span><br><span class="line">           <span class="comment">//如果站立时，则蹲下</span></span><br><span class="line">           <span class="keyword">if</span> (m_isStanding) &#123;</span><br><span class="line">               m_isStanding = <span class="literal">false</span>;</span><br><span class="line">               player.<span class="built_in">sneak</span>();<span class="comment">//蹲下的代码</span></span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">//如果蹲下时，则站立</span></span><br><span class="line">           <span class="keyword">else</span> &#123;</span><br><span class="line">               m_isStanding = <span class="literal">true</span>;</span><br><span class="line">               player.<span class="built_in">stand</span>();<span class="comment">//站立的代码</span></span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到一堆if-else语句非常复杂，要是添加更多行为，其逻辑结构更加难以维护，而且主角的代码又得重新编译（耦合性大）</p>
+<p>一个可行的办法是将这些 <strong>状态&amp;状态切换&amp;状态对应的行为</strong> 封装成类，</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1409576-20181226091322393-1146430295.png" alt="img"></p>
+<p>代码实现1：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//状态接口类</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">State</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//处理输入，然后根据输入转换相应的状态</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">handleInput</span><span class="params">(Player&amp; player,<span class="type">const</span> Input&amp; input)</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//站立状态</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">StandState</span> : <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">handleInput</span><span class="params">(Player&amp; player, <span class="type">const</span> Input&amp; input)</span> <span class="keyword">override</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input == PRESS_B) &#123;</span><br><span class="line">            player.<span class="built_in">jump</span>();<span class="comment">//角色跳跃的代码</span></span><br><span class="line">            player.<span class="built_in">setState</span>(<span class="built_in">JumpState</span>());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (input == PRESS_DOWN) &#123;</span><br><span class="line">            player.<span class="built_in">sneak</span>();<span class="comment">//角色蹲下的代码</span></span><br><span class="line">            player.<span class="built_in">setState</span>(<span class="built_in">SneakState</span>());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//跳跃状态</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">JumpState</span> : <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">handleInput</span><span class="params">(Player&amp; player, <span class="type">const</span> Input&amp; input)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input == PRESS_DOWN) &#123;</span><br><span class="line">            player.<span class="built_in">dive</span>();<span class="comment">//角色俯冲的代码</span></span><br><span class="line">            player.<span class="built_in">setState</span>(<span class="built_in">DiveState</span>());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//下蹲状态</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SneakState</span> : <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">handleInput</span><span class="params">(Player&amp; player, <span class="type">const</span> Input&amp; input)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (input == PRESS_DOWN) &#123;</span><br><span class="line">            player.<span class="built_in">stand</span>();<span class="comment">//角色站立的代码</span></span><br><span class="line">            player.<span class="built_in">setState</span>(<span class="built_in">StandState</span>());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//俯冲状态</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DiveState</span> : <span class="keyword">public</span> State &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">handleInput</span><span class="params">(Player&amp; player, <span class="type">const</span> Input&amp; input)</span> <span class="keyword">override</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>代码实现2：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="built_in">enum</span> GameState</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//游戏开始</span></span><br><span class="line">    GameStart,</span><br><span class="line">    Preparation,</span><br><span class="line">    <span class="comment">//玩家回合</span></span><br><span class="line">    PlayerRoundStartResolution,</span><br><span class="line">    PlayerAction,</span><br><span class="line">    PlayerRoundEndResolution,</span><br><span class="line">    <span class="comment">//敌人回合</span></span><br><span class="line">    EnemyRoundStartResolution,</span><br><span class="line">    EnemyAction,</span><br><span class="line">    EnemyRoundEndResolution,</span><br><span class="line">    <span class="comment">//战斗结束</span></span><br><span class="line">    PlayerLose,</span><br><span class="line">    PlayerLoseResolution,</span><br><span class="line">    PlayerWin,</span><br><span class="line">    Reward</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IState</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnEnter</span>()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnUpdate</span>()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnExit</span>()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>unity的动画状态机就是一个很好的例子</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1409576-20190207223240946-913199845.jpg" alt="img"></p>
+<h2 id="行为树"><a href="#行为树" class="headerlink" title="行为树"></a>行为树</h2><h3 id="为什么需要行为树？"><a href="#为什么需要行为树？" class="headerlink" title="为什么需要行为树？"></a>为什么需要行为树？</h3><ol>
+<li><p><strong>层次化结构</strong>：行为树以树形结构组织 AI 的行为，具有层次化的特点，从顶部的根节点开始，逐级展开到叶子节点。这种结构使得行为树更容易理解和管理，能够清晰地表达 AI 的行为逻辑。</p>
+</li>
+<li><p><strong>灵活性</strong>：行为树提供了更灵活的行为组合方式，通过组合不同类型的节点（例如序列节点、选择节点、并行节点等），可以实现丰富多样的行为表达。这种灵活性使得行为树适用于各种复杂的 AI 行为设计需求。</p>
+</li>
+<li><p><strong>可扩展性</strong>：行为树易于扩展和调整。开发人员可以轻松地添加、修改或删除行为树的节点，而不会影响到其他部分的逻辑。这种特性使得行为树在面对复杂的 AI 行为需求时更加适用。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/20190723100031475.png" alt="Unity战斗框架 优化Animator动画状态机排线_战斗动画状态机-CSDN博客"></p>
+</li>
+</ol>
+<p>相较于状态机，行为树在复杂的 AI 行为设计上具有更多的优势，尤其适用于需要灵活、层次化、可扩展和容错的 AI 行为模型。</p>
+<p>行为树是当前最主流的游戏开发中的AI实现方案，和状态机这样概念结构比较简单的模型不同，行为树自带了很多专属于行为树的概念，比如组合、装饰器、任务等。</p>
+<h3 id="行为树的推导方法论"><a href="#行为树的推导方法论" class="headerlink" title="行为树的推导方法论"></a>行为树的推导方法论</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/675093070">游戏开发技术杂谈14：理解行为树 - 知乎 (zhihu.com)</a></p>
+<p>简而言之，在游戏开发中使用行为树其实就是通过提供一个合理的逻辑表达方式来帮助策划，使得策划可以完全独立于程序进行配置</p>
+<h3 id="行为树的概念（behavior-tree）"><a href="#行为树的概念（behavior-tree）" class="headerlink" title="行为树的概念（behavior tree）"></a>行为树的概念（behavior tree）</h3><ol>
+<li><strong>行为树是树：</strong>执行时从根结点开始按照指定的顺序遍历，直到到达终结状态</li>
+<li>**叶子结点都是可执行的行为:**叶子结点会进行具体的操作，可以是一个简单的检测操作，也可以是一个更复杂的操作，结点会返回状态信息(成功，失败，运行中)。</li>
+<li><strong>内部结点控制树的遍历：</strong>内部结点会根据孩子结点返回的状态信息，按照特定的规则确定下一个执行的结点。</li>
+</ol>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/image.png" alt="img"></p>
+<ol>
+<li>tick:行为树从根节点开始按照预定义的顺序遍历各个节点并执行他们的行为的过程称为一次tick，会返回**成功(success)<strong>，</strong>失败(failure)<strong>，</strong>运行中(running)**的状态信息给它的父结点。</li>
+<li><strong>行为结点(execution node)<strong>：行为树的叶子结点，可以是动作结点(action node)或条件结点(condition node)。对于条件结点(condition node)会在一次tick后立马返回</strong>成功或</strong>失败的状态信息。对于动作结点(action node)则可以跨越多个tick执行，直到到达它的终结状态。一般来说，条件结点用于简单的判断(比如钳子是否打开?)，动作结点用于表示复杂的行为(比如打开房门)。</li>
+<li><strong>控制结点(<strong><strong>control node</strong></strong>)：</strong>控制结点是行为树的内部结点，它们定义了遍历其孩子结点的方式。<strong>控制结点的孩子可以是行为结点，也可以是控制结点</strong>。<strong>顺序(Sequence)<strong>，</strong>备选(Fallback)<strong>，</strong>并行(Parallel)这3种类型的控制结点可以有任意数量的孩子结点<strong><strong>，它们的区别在于对其孩子结点的处理方式。而</strong></strong>装饰(Decorator)结点只能有一个孩子结点</strong>，用来对孩子结点的行为进行自定义修改。</li>
+</ol>
+<h3 id="不同类型的控制结点："><a href="#不同类型的控制结点：" class="headerlink" title="不同类型的控制结点："></a>不同类型的控制结点：</h3><h4 id="顺序节点"><a href="#顺序节点" class="headerlink" title="顺序节点"></a>顺序节点</h4><p>按顺序执行孩子结点直到其中一个孩子结点返回失败状态或所有孩子结点返回成功状态。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/image.png"></p>
+<h4 id="选择节点"><a href="#选择节点" class="headerlink" title="选择节点"></a>选择节点</h4><p>按顺序执行孩子结点直到其中一个孩子结点返回成功状态或所有孩子结点返回失败状态。一般用来实现角色的选择行为。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/bt_fallback_node.png"></p>
+<h4 id="并行节点"><a href="#并行节点" class="headerlink" title="并行节点"></a>并行节点</h4><p>“并行执行”所有孩子结点。直到至少M个孩子(M的值在1到N之间)结点返回成功状态或所有孩子结点返回失败状态。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/1.png"></p>
+<h4 id="装饰结点"><a href="#装饰结点" class="headerlink" title="装饰结点"></a>装饰结点</h4><p>装饰结点：以自定义的方式修改孩子结点的行为。比如Invert类型的装饰结点，可以反转其孩子结点返回的状态信息。为了方便他人理解，应该尽可能使用比较常见的装饰结点。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/2.png"></p>
+<h3 id="行为树举例说明"><a href="#行为树举例说明" class="headerlink" title="行为树举例说明"></a>行为树举例说明</h3><p>有一个角色的行为树，</p>
+<p>当它周围没有敌人时，保持巡逻状态；</p>
+<p>当它周围有敌人时，前往敌人的位置；</p>
+<p>当它靠近敌人，达到攻击的范围时，执行攻击操作；</p>
+<p>当敌人被消灭时，周围没有敌人了，回到之前的巡逻状态。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-a800c1c10fe5e8f13db4ad82f6d126f4_720w.webp" alt="img"></p>
+<p><strong>行为节点（Action）</strong></p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-541de51410a1c5b8983a2eef32dbedf7_r.jpg" alt="img"></p>
+<p>没有子节点，用以执行具体行为的节点。</p>
+<p><strong>条件节点（Conditional）</strong></p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-4e0c131189696544271fda087c56ea2b_720w.webp" alt="img"></p>
+<p>没有子节点，用以判定条件是否成立的节点。</p>
+<h3 id="在unity中使用行为树插件："><a href="#在unity中使用行为树插件：" class="headerlink" title="在unity中使用行为树插件："></a>在unity中使用行为树插件：</h3><p>这边进行样例演示</p>
+<h2 id="GOAP-Goal-Orentated-Action-planning"><a href="#GOAP-Goal-Orentated-Action-planning" class="headerlink" title="GOAP(Goal Orentated Action planning):"></a>GOAP(Goal Orentated Action planning):</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>目标导向型行动计划（简称GOAP）是一种能够轻松呈现给你的代理选择的AI系统，也是帮助你可以无需维持一个庞大且复杂的有限状态机而做出明智的决策的机器。GOAP的一个Action只有在其所有前提条件都得到满足的情况下才能执行，并且每个动作都会以某种方式改变世界的状态。</p>
+<p>也就是， 让AI创造他们自己的方法去解决问题，我们提供给它一系列可能的动作作为对这个世界的描述，和每个动作使用的先决条件，和行动带来的影响。AI拥有一个初始状态和他需要达到的目标。有一组目标，AI可以通过优先级或当前状态选择一个。计划系统决定一个动作序列来满足当 前目标，计划出一个像路径一样的能最简单达到目标状态的动作序列。</p>
+<h3 id="GOAP使用场景"><a href="#GOAP使用场景" class="headerlink" title="GOAP使用场景"></a>GOAP使用场景</h3><p>所有需要用到复杂AI的地方都可以使用，为什么非要是复杂AI呢，因为简单AI用FSM或行为树足以干净利落的解决问题，就没必要舍近求远了，那么这个复杂和简单用什么来界定呢，我在这里说一下我的标准，如果一个FSM的连线或者切换关系已经让人感觉一团糟，一个行为树的树状图非常庞大（100起），这个时候，你就可以考虑使用GOAP来化解难题了。</p>
+<h3 id="GOAP中的一些概念"><a href="#GOAP中的一些概念" class="headerlink" title="GOAP中的一些概念"></a>GOAP中的一些概念</h3><p>WorldState,Condition,Sensor,Action,A*</p>
+<p>Action：它由前提条件（PreCondition）和效果（Effect）组成，一般都是键值对，要执行一个Action，需要先检查前提条件是否满足，然后再把效果内容加入到Memory中（可选）</p>
+<p>Goal：AI的目标，也是包含一个或多个键值对，会以此为基准使用A*算法展开路径搜索。例如：</p>
+<p>Memory：AI的记忆，更新维护AI所认知的世界状态，偏静态。例如：{‘hasMoney’: true}</p>
+<p>Sensor：感知者，其本质和Memory一样，但是偏动态，之所以需要他是因为我们很多时候需要做一下逻辑处理才会把世界状态写入Memory，例如，AI在血量小于30%时会寻找掩护物，要处理这个过程，我们需要一个Sensor来订阅AI的血量改变状态，每次改变就判断是否小于30%，如果是，就把Memory中”isInDanger”设置为true。</p>
+<h3 id="具体示例："><a href="#具体示例：" class="headerlink" title="具体示例："></a>具体示例：</h3><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Action：&#123;名称：建造Axe&#125;，&#123;先决条件：hasWood = true，hasSteel = true&#125;，&#123;效果：hasAxe = true，hasWood = false，hasSteel = false&#125;，&#123;权重：10&#125;</span></span><br><span class="line">ReGoapTestsHelper.GetCustomAction(gameObject, <span class="string">&quot;CreateAxe&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasWood&quot;</span>, <span class="literal">true</span>&#125;, &#123;<span class="string">&quot;hasSteel&quot;</span>, <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasAxe&quot;</span>, <span class="literal">true</span>&#125;, &#123;<span class="string">&quot;hasWood&quot;</span>, <span class="literal">false</span>&#125;, &#123;<span class="string">&quot;hasSteel&quot;</span>, <span class="literal">false</span>&#125;&#125;, <span class="number">10</span>);</span><br><span class="line"><span class="comment">//Action：&#123;名称：砍树&#125;，&#123;先决条件：无&#125;，&#123;效果：hasRawWood = true&#125;，&#123;权重：2&#125;</span></span><br><span class="line">ReGoapTestsHelper.GetCustomAction(gameObject, <span class="string">&quot;ChopTree&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123; &#125;,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasRawWood&quot;</span>, <span class="literal">true</span>&#125;&#125;, <span class="number">2</span>);</span><br><span class="line"><span class="comment">//Action：&#123;名称：加工原木&#125;，&#123;先决条件：hasRawWood = true&#125;，&#123;效果：hasRawWood = false，hasWood = true&#125;，&#123;权重：5&#125;</span></span><br><span class="line">ReGoapTestsHelper.GetCustomAction(gameObject, <span class="string">&quot;WorksWood&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasRawWood&quot;</span>, <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasWood&quot;</span>, <span class="literal">true</span>&#125;, &#123;<span class="string">&quot;hasRawWood&quot;</span>, <span class="literal">false</span>&#125;&#125;, <span class="number">5</span>);</span><br><span class="line"><span class="comment">//Action：&#123;名称：拥有矿山&#125;，&#123;先决条件：无&#125;，&#123;效果：hasOre = true&#125;，&#123;权重：10&#125;</span></span><br><span class="line">ReGoapTestsHelper.GetCustomAction(gameObject, <span class="string">&quot;MineOre&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123; &#125;,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasOre&quot;</span>, <span class="literal">true</span>&#125;&#125;, <span class="number">10</span>);</span><br><span class="line"><span class="comment">//Action：&#123;名称：加工矿石&#125;，&#123;先决条件：hasOre = true&#125;，&#123;效果：hasOre = false，hasSteel = ture&#125;，&#123;权重：10&#125;</span></span><br><span class="line">ReGoapTestsHelper.GetCustomAction(gameObject, <span class="string">&quot;SmeltOre&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasOre&quot;</span>, <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasSteel&quot;</span>, <span class="literal">true</span>&#125;, &#123;<span class="string">&quot;hasOre&quot;</span>, <span class="literal">false</span>&#125;&#125;, <span class="number">10</span>);</span><br><span class="line"><span class="comment">//Goal：&#123;名称：拥有Axe&#125;，&#123;目标状态：hasAxe = true&#125;，&#123;优先级：1&#125;</span></span><br><span class="line"><span class="keyword">var</span> hasAxeGoal = ReGoapTestsHelper.GetCustomGoal(gameObject, <span class="string">&quot;HasAxeGoal&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasAxe&quot;</span>, <span class="literal">true</span>&#125;&#125;, <span class="number">1</span>);</span><br><span class="line"><span class="comment">//Goal：&#123;名称：拥有Axe和矿山&#125;，&#123;目标状态：hasAxe = true，hasOre = true，isGreedy = true&#125;，&#123;优先级：2&#125;</span></span><br><span class="line"><span class="keyword">var</span> greedyHasAxeAndOreGoal = ReGoapTestsHelper.GetCustomGoal(gameObject, <span class="string">&quot;GreedyHasAxeAndOreGoal&quot;</span>,</span><br><span class="line">    <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">object</span>&gt; &#123;&#123;<span class="string">&quot;hasAxe&quot;</span>, <span class="literal">true</span>&#125;, &#123;<span class="string">&quot;hasOre&quot;</span>, <span class="literal">true</span>&#125;, &#123;<span class="string">&quot;isGreedy&quot;</span>, <span class="literal">true</span>&#125;&#125;,</span><br><span class="line">    <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://myfirstblog.oss-cn-hangzhou.aliyuncs.com/typoraImages_3/20210916152958.png!webp" alt="image-20210916152957981"></p>
+<p>那么，我们现在开始进行规划，现在有两个目标，而GoalZ的优先级大于GoalY，所以会先把GoalZ纳入规划目标，但是我们找不到“贪婪的”这一状态，所以这个目标规划失败了，然后去尝试规划GoalY，它的规划结果如下</p>
+<p>即：ActionA-&gt;ActionC-&gt;ActionB-&gt;ActionD-&gt;ActionE</p>
+<p>这似乎与我们所想的ActionA-&gt;ActionB-&gt;ActionC-&gt;ActionD-&gt;ActionE结果不同，这是因为ReGoap中使用的A*是从终点-&gt;起点，而不是起点-&gt;终点的，这就会导致它只可以保证综合结果的Cost一定是所有规划里最小的，但在单次规划中并不会确定性采用权值较小的Action为下一结点，这样做是有考虑的，因为如果是从起点到终点进行的规划，就会多出非常多的可能性，更多的可能性意味着更多的计算，这对于要求低延迟的游戏造成的后果是不可接受的。</p>
+<h3 id="与行为树和状态机的对比"><a href="#与行为树和状态机的对比" class="headerlink" title="与行为树和状态机的对比"></a>与行为树和状态机的对比</h3><p><strong>缺点</strong></p>
+<ul>
+<li>GOAP学习成本偏高</li>
+<li>GOAP默认不保证Action顺序，如果我们想要强制指定顺序，需要额外做一些操作，但是一般而言我们的AI也不会去在意这种无关紧要的顺序，因为重要的顺序我们已经规范好了。</li>
+<li>GOAP毕竟使用了运行时规划，会对游戏性能产生一定的影响，但是这种目标导向的A*规划在AI复杂的情况下，性能并不一定比FSM&#x2F;行为树弱。</li>
+</ul>
+<p><strong>优点</strong></p>
+<ul>
+<li>解耦目标和行为，设计时可以更加专注的设计AI的行为不用过多考虑目标，新增，减少Action非常方便，不会像FSM&#x2F;行为树那样具有那么强的入侵性和破坏性，提高了开发效率</li>
+<li>动态规划的能力，这会使我们的AI看起来更加“智能”</li>
+<li>配置方便，易于理解，完全可以让策划使用EXCEL接管AI开发工作</li>
+</ul>
+<h2 id="HTN（Hierarchical-Task-Networks）："><a href="#HTN（Hierarchical-Task-Networks）：" class="headerlink" title="HTN（Hierarchical Task Networks）："></a>HTN（Hierarchical Task Networks）：</h2><h3 id="学习资料："><a href="#学习资料：" class="headerlink" title="学习资料："></a>学习资料：</h3><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/323258599/answer/1941657770">(3 封私信 &#x2F; 45 条消息) 学习HTN规划技术要了解哪些东西? - 知乎 (zhihu.com)</a></p>
+<h3 id="概念介绍："><a href="#概念介绍：" class="headerlink" title="概念介绍："></a>概念介绍：</h3><p>在AI开发中，一个普遍需要解决的问题是行为选择。这个问题有很多解决方案，比如FSM有限状态机、行为树、基于效用的选择、神经网络和规划器。这篇文章通过利用在开发过程中可能遇到的现实世界中的项目例子来探究一个类型规划器的细微差别，这类规划器称为分层任务网络(HTN)规划器。</p>
+<p>HTN这样的规划器架构，是将一个问题作为输入，并提供一系列解决问题的步骤。在HTN术语中，这一系列步骤称为一个计划(plan)。HTN相对于其他规划器的独特之处在于，它允许我们把问题表现为一个非常高级（抽象）的计划(plan)，通过它的规划过程，递归地把这个任务分解成更小的任务。当这个过程完成时，剩下生成的是一组表示计划(plan)的原子任务。</p>
+<h3 id="关键词："><a href="#关键词：" class="headerlink" title="关键词："></a>关键词：</h3><p>自前往后，任务，分解任务，运行时规划</p>
+<h4 id="大致架构"><a href="#大致架构" class="headerlink" title="大致架构"></a>大致架构</h4><p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/ef0a710c-364b-4997-98b0-7ddacdca53d3_image.png" alt="img"></p>
+<h3 id="详细概念："><a href="#详细概念：" class="headerlink" title="详细概念："></a>详细概念：</h3><h4 id="世界状态（The-World-State）"><a href="#世界状态（The-World-State）" class="headerlink" title="世界状态（The World State）"></a>世界状态（The World State）</h4><p>世界状态（World State）是指在任何给定时间点，描绘环境和代理（通常是游戏中的角色或者是一个自主的软件代理）属性的一组变量或属性值。这些变量或属性值描述了环境和代理当前的情况，允许规划系统根据这些信息做出决策。</p>
+<h4 id="传感器（Sensor）"><a href="#传感器（Sensor）" class="headerlink" title="传感器（Sensor）"></a>传感器（Sensor）</h4><p>传感器(sensor)可以管理不同的世界状态(world state)属性。一些不同传感器的例子包括视觉、听觉、范围和生命值传感器。这些传感器的工作原理与任何其他人工智能系统相同，只是增加了一个步骤，即把它们的信息编码成我们的HTN能够理解的世界状态(world state)。</p>
+<h4 id="原子任务（Primitive-Tasks"><a href="#原子任务（Primitive-Tasks" class="headerlink" title="原子任务（Primitive Tasks)"></a>原子任务（Primitive Tasks)</h4><p>原子任务是指不能再被分解为更小任务的基础任务。它们是HTN执行过程中的最基本单位，直接映射到实际动作或操作上。原子任务通常与特定的动作相对应，这些动作在世界状态上具有直接影响，改变环境或者代理的状态。</p>
+<p>假设有一个探索游戏，其中的HTN规划目标是让角色寻找并收集游戏世界中的特定资源。这个过程可能包括复合任务，如“探索区域”和“收集资源”。其中，“探索区域”可能进一步分解为“移动到区域A”和“搜索区域A”，最终，“移动到区域A”这种动作就是一个原子任务，因为它直接对应到游戏世界中的一个不可再分的动作。</p>
+<h4 id="复合任务（Composite-Tasks）"><a href="#复合任务（Composite-Tasks）" class="headerlink" title="复合任务（Composite Tasks）"></a>复合任务（Composite Tasks）</h4><p>复合任务是指可以被进一步分解为更多子任务（复合任务或原子任务）的任务。这种任务的分解是基于任务的层次结构进行的，其目的是通过逐层分解来简化问题解决过程，直至所有的任务被分解为可直接执行的原子任务。</p>
+<p>以一个简化的机器人清理房间的任务为例，顶层的复合任务可能是“清理房间”。这个任务可以进一步分解为“清理地板”和“整理桌子”两个复合任务。继续分解，“清理地板”可能变为“扫地”和“拖地”两个原子任务，而“整理桌子”可能进一步分解为“拾起物品”和“擦拭桌面”等原子任务。</p>
+<h4 id="方法（method）"><a href="#方法（method）" class="headerlink" title="方法（method）"></a>方法（method）</h4><p>“方法”用于描述如何将复合任务分解成更具体的子任务序列。这些子任务可以是进一步的复合任务，需要继续分解，或者是原子任务，直接对应于可执行的动作。方法基本上定义了从高层任务到更低层、更具体任务之间的分解规则和逻辑。</p>
+<h4 id="三者关系"><a href="#三者关系" class="headerlink" title="三者关系"></a>三者关系</h4><p>复合任务实际上只是一组方法(method)的容器，这些方法(method)每一个都是用来表示完成某个高级任务的不同方式</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/db2db7e0-546b-4eb6-ac80-d365d11dd2f8_image.png" alt="img"></p>
+<h4 id="计划（Plan）"><a href="#计划（Plan）" class="headerlink" title="计划（Plan）"></a>计划（Plan）</h4><p>计划（plan）是指从初始状态到达目标状态的一系列可执行动作的组合。这些动作是通过对初步任务（可能是一个或多个复合任务）的逐步分解和具体化得到的。最终，这些动作被组织成一个顺序或有时是并行的执行序列，旨在完成给定的目标或任务。</p>
+<p>假设有一个机器人在仓库环境中的任务是从仓库的一端将一箱货物移动到另一端，并且途中需要避开障碍物。</p>
+<ol>
+<li><p><strong>高层任务</strong>：将货物从A点移动到B点。</p>
+</li>
+<li><p>复合任务分解</p>
+<p>：这个高层任务可以分解为几个子任务：</p>
+<ul>
+<li>定位货物。</li>
+<li>搬起货物。</li>
+<li>规划到达B点的路径，考虑避开障碍物。</li>
+<li>沿规划路径移动货物。</li>
+<li>在B点放下货物。</li>
+</ul>
+</li>
+</ol>
+<h4 id="规划器（Planner）"><a href="#规划器（Planner）" class="headerlink" title="规划器（Planner）"></a>规划器（Planner）</h4><p>（Planner）是一个核心组件，负责执行整个规划流程，即从初始状态开始，通过逐步分解任务并应用相应的方法，最终生成一个实现目标的计划。</p>
+<p>伪代码实现：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//规划（核心）</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Plan</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//先复制一份世界状态</span></span><br><span class="line">    <span class="keyword">var</span> worldState = HTNWorld.CopyWorldState();</span><br><span class="line">    <span class="comment">//将存储列表清空，避免上次计划结果的影响</span></span><br><span class="line">    FinalTasks.Clear();</span><br><span class="line">    <span class="comment">//将根任务压进栈中，准备分解</span></span><br><span class="line">    taskOfProcess.Push(rootTask);</span><br><span class="line">    <span class="comment">//只要栈还没空，就继续分解</span></span><br><span class="line">    <span class="keyword">while</span>(taskOfProcess.Count &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//拿出栈顶的元素</span></span><br><span class="line">        <span class="keyword">var</span> task = taskOfProcess.Pop();</span><br><span class="line">        <span class="comment">//如果这个元素是复合任务</span></span><br><span class="line">        <span class="keyword">if</span>(task <span class="keyword">is</span> CompoundTask cTask)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//判断是否可以执行</span></span><br><span class="line">            <span class="keyword">if</span>(cTask.MetCondition(worldState))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">/*如果可以执行，就肯定有可用的方法，</span></span><br><span class="line"><span class="comment">                就将该方法的子任务都压入栈中，以便继续分解*/</span></span><br><span class="line">                <span class="keyword">var</span> subTask = cTask.ValidMethod.SubTask;</span><br><span class="line">                <span class="keyword">foreach</span>(<span class="keyword">var</span> t <span class="keyword">in</span> subTask)</span><br><span class="line">                &#123;</span><br><span class="line">                    taskOfProcess.Push(t);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">/*通过上面的步骤我们知道，能被压进栈中的只有</span></span><br><span class="line"><span class="comment">                复合任务和原子任务，方法本身并不会入栈*/</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="comment">//否则，这个元素就是原子任务</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//将该元素转为原子任务，因为原本是IBaseTask类型</span></span><br><span class="line">            <span class="keyword">var</span> pTask = task <span class="keyword">as</span> PrimitiveTask;</span><br><span class="line">            <span class="comment">//再将该原子任务加入存放分解完成的任务列表</span></span><br><span class="line">            FinalTasks.Push(pTask);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="执行器："><a href="#执行器：" class="headerlink" title="执行器："></a>执行器：</h4><p>规划器的要点在于对「复合任务」的分解，这里提一下，一个HTN会保证有一个复合任务做为根任务，就和行为树的根节点一样。分解也是由此开始：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//用于描述运行结果的枚举（如果有看上一篇行为树的话</span></span><br><span class="line"><span class="keyword">public</span> <span class="built_in">enum</span> EStatus</span><br><span class="line">&#123;</span><br><span class="line">    Failure, Success, Running, </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HTNPlanRunner</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//当前运行状态</span></span><br><span class="line">    <span class="keyword">private</span> EStatus curState;</span><br><span class="line">    <span class="comment">//直接将规划器包含进来，方便重新规划</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> HTNPlanner planner;</span><br><span class="line">    <span class="comment">//当前执行的原子任务</span></span><br><span class="line">    <span class="keyword">private</span> PrimitiveTask curTask;</span><br><span class="line">    <span class="comment">//标记「原子任务列表是否还有元素、能够继续」</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">bool</span> canContinue;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HTNPlanRunner</span>(<span class="params">HTNPlanner planner</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.planner = planner;</span><br><span class="line">        curState = EStatus.Failure;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RunPlan</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//如果当前运行状态是失败（一开始默认失败）</span></span><br><span class="line">        <span class="keyword">if</span>(curState == EStatus.Failure)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//就规划一次</span></span><br><span class="line">            planner.Plan();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果当前运行状态是成功，就表示当前任务完成了</span></span><br><span class="line">        <span class="keyword">if</span>(curState == EStatus.Success)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//让当前原子任务造成影响</span></span><br><span class="line">            curTask.Effect();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*如果当前状态不是「正在执行」，就取出新一个原子任务作为当前任务</span></span><br><span class="line"><span class="comment">        无论失败还是成功，都要这么做。因为如果是失败，肯定在代码运行到这</span></span><br><span class="line"><span class="comment">        之前，已经进行了一次规划，理应获取新规划出的任务来运行；如果是因</span></span><br><span class="line"><span class="comment">        为成功，那也要取出新任务来运行*/</span></span><br><span class="line">        <span class="keyword">if</span>(curState != EStatus.Running)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//用TryPop的返回结果判断规划器的FinalTasks是否为空</span></span><br><span class="line">            canContinue = planner.FinalTasks.TryPop(<span class="keyword">out</span> curTask);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*如果canContinue为false，那curTask会为null也视作失败（其实应该是「全部</span></span><br><span class="line"><span class="comment">        完成」，但全部完成和失败是一样的，都要重新规划）。所以只有当canContinue &amp;&amp; curTask.MetCondition()都满足时，才读取当前原子任务的运行状态，否则就失败。*/</span></span><br><span class="line">        curState = canContinue &amp;&amp; curTask.MetCondition() ? curTask.Operator() : EStatus.Failure;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="只狼的游戏AI—-以弦一郎为例（行为树与HTN的结合，变种的HTN或者行为树）"><a href="#只狼的游戏AI—-以弦一郎为例（行为树与HTN的结合，变种的HTN或者行为树）" class="headerlink" title="只狼的游戏AI—-以弦一郎为例（行为树与HTN的结合，变种的HTN或者行为树）"></a>只狼的游戏AI—-以弦一郎为例（行为树与HTN的结合，变种的HTN或者行为树）</h2><h4 id="写在开头："><a href="#写在开头：" class="headerlink" title="写在开头："></a>写在开头：</h4><p><strong>动作游戏是贩卖关于强大角色或能力的幻想</strong>。</p>
+<h4 id="AI结构："><a href="#AI结构：" class="headerlink" title="AI结构："></a>AI结构：</h4><p>FromSoftWare的ai配置是用lua进行配置</p>
+<p><em>Lua 是一种轻量小巧的脚本语言，用标准C语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。</em></p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/b301c86dd22698c44a8deee8d327ef0a-910-775.png" alt="img"></p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-d7c4bba0d6c91ccc34418a46ccb09579_r.jpg" alt="img"></p>
+<ul>
+<li><p><strong>Goal.Activate主动计划——自由态时调用</strong> 根据与玩家距离、方位、状态，从众多任务里随机选择一个执行。任务的随机是有权重的，按照设定的权重分配</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-1a700dcc21f30e50aebd5dc026bc3b7e_r.jpg" alt="img"></p>
+</li>
+<li><p><strong>Goal.Interrupt变招计划——不只是读指令</strong> 由于玩家角色的特定行为，中断原有计划转为执行其他动作的计划。</p>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-a89d37d7d98d4513371099c8176dffe9_1440w.webp" alt="img"></p>
+</li>
+<li><p><strong>Goal.Kengeki交锋计划</strong> 根据玩家格挡或自身格挡的结果判断，从众多任务里随机选择一个执行。</p>
+</li>
+</ul>
+<p><img src="https://typorapicturefivuvuv.oss-cn-shanghai.aliyuncs.com/picgo/v2-7d8f1b034d1e02bce986187dd8e9ae22_r.jpg" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/10/18/%E5%85%B3%E4%BA%8Egithub%E9%A1%B9%E7%9B%AE%E8%94%9A%E8%93%9D%E6%89%8B%E6%84%9F2d%E6%8E%A7%E5%88%B6%E5%99%A8%E7%9A%84%E7%A0%94%E7%A9%B6/" rel="prev" title="关于github项目蔚蓝手感2d控制器的研究">
+                  <i class="fa fa-angle-left"></i> 关于github项目蔚蓝手感2d控制器的研究
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">qby</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">全站共 8.6k 字</span>
+</div>
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
