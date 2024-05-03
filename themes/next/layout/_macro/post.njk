@@ -23,6 +23,11 @@
       <meta itemprop="description" content="{{ page.description }}">
     </span>
 
+    <span class="post-meta-divider">|</span>
+<span title="{{ __('post.wordcount') }}">
+<span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i></span>字数： {{ wordcount(post.content) }}
+<span>预计阅读时间: {{ min2read(post.content) }} 分钟</span>
+</span>
     {%- if post.header !== false %}
       <header class="post-header">
         <{% if is_index %}h2{% else %}h1{% endif %} class="post-title{% if post.direction and post.direction.toLowerCase() === 'rtl' %} rtl{% endif %}" itemprop="name headline">

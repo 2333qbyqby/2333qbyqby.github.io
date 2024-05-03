@@ -1,9 +1,11 @@
 ---
 title: 关于github项目蔚蓝手感2d控制器的研究
 date: 2023-10-18 21:31:50
+categories: 技术
 tags:
  - unity
  - 源码分析
+hidden: true
 ---
 
 ## 蔚蓝手感项目研究：
@@ -11,6 +13,8 @@ tags:
 ### 项目链接：
 
 <https://github.com/david-reborn/2D-Platform-Controller>
+
+<!--more-->
 
 ### 脚本分析：
 

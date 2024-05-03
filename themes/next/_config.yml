@@ -97,7 +97,7 @@ open_graph:
 # External url should start with http:// or https://
 menu:
   home: / || fa fa-home
-  #about: /about/ || fa fa-user
+  about: /about/ || fa fa-user
   tags: /tags/ || fa fa-tags
   categories: /categories/ || fa fa-th
   archives: /archives/ || fa fa-archive
@@ -255,6 +255,12 @@ post_meta:
   categories: true
 
 # Post wordcount display settings
+post_wordcount:
+  item_text: true
+  wordcount: true #单篇文章字数
+  min2read: true #单篇阅读时长
+  totalcount: true #站点总字数
+  separated_meta: true
 # Dependencies: https://github.com/next-theme/hexo-word-counter
 symbols_count_time:
   separated_meta: true
